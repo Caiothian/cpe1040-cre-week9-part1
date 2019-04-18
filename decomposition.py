@@ -40,7 +40,32 @@ max_bits = 32  # the maximum number of bits in the bit list
 # use the variables above
 
 def bit_image():
-    pass
+    global bit_list
+    global bit_on
+
+    num_bits = len(bit_list)  # how many bits are already defined
+    show_bits = []  # list for constructing the Image
+
+    # which page are we on?
+    if num_bits <= 25:
+        show_bits = [b for b in bit_list]
+    else:
+        show_bits = [b for b in bit_list[25:]]
+
+    # add the current bit (0 or 1)
+    show_bits.append(current_bit)
+
+    # right-pad with 0s
+    show_bits.extend([0 for _ in range(25 - len(show_bits))])
+
+    # convert list values to characters and join into a string
+    bit_string = ''.join([str(bit_on) if b == 1 else '0' for b in show_bits])
+
+    # construct image string
+    img_string = ':'.join([bit_string[0:5], bit_string[5:10], bit_string[10:15], bit_string[15:20], bit_string[20:]])
+
+    return Image(img_string)
+
 
 # show display (note: cannot use display as a function name because it would shadow the eponymous microbit object)
 def show():
@@ -119,7 +144,8 @@ value_funs[types[3]] = bit_pattern_value_ascii
 # it takes TWO simple presses of button B to transition to 'value' at the last bit
 
 def toggle_screen():
-    pass
+    display.show(id)
+
 
 # action B press
 def action_b_press():
@@ -134,7 +160,10 @@ def action_b_press():
     global scroll_value
     global scrolled
 
-    pass
+    if screens[screen_id] == 'bits':
+        bit_list.append(current_bit)
+        current_bit = 0
+
 
 # action A press
 def action_a_press():
@@ -164,15 +193,15 @@ while True:
     show()
 
     # poll for control actions and dispatch corresponding functions
+    hold_b = False
     if button_b.is_pressed():
         start_ms = utime.ticks_ms()
         while True:
-            if not button_b.is_pressed():
+            if utime.ticks_diff(utime.ticks_ms(), start_ms) >= hold_ms:
+                # hold
+                hold_b = True  # set hold-B to prevent a simple press to be registered
+                toggle_screen()
                 break
-        if utime.ticks_diff(utime.ticks_ms(), start_ms) >= hold_ms:
-            # hold
-            hold_b = True  # set hold-B to prevent a simple press to be registered
-            toggle_screen()
 
     if button_b.was_pressed():  # note: was_pressed is better for toggling and cycling
         if hold_b:

@@ -15,6 +15,6 @@ while True:
 # 3. y is up-down, which is standard for matrices
 
 # Note:
-# The construction of a micorbit Image object for the function show()
+# The construction of a microbit Image object for the function show()
 # is a dead giveaway of what the coordinate system is, as it is
 # constructed by concatenating line after line from top to bottom!
