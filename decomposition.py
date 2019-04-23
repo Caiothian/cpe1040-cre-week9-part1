@@ -144,7 +144,8 @@ value_funs[types[3]] = bit_pattern_value_ascii
 # it takes TWO simple presses of button B to transition to 'value' at the last bit
 
 def toggle_screen():
-    display.show(id)
+    global screen_id
+    screen_id = (screen_id + 1) % 2
 
 
 # action B press
@@ -163,6 +164,10 @@ def action_b_press():
     if screens[screen_id] == 'bits':
         bit_list.append(current_bit)
         current_bit = 0
+        if len(bit_list) > 31:
+            toggle_screen()
+    elif screens[screen_id] == 'value':
+        type_id = (type_id + 1) % len(types)
 
 
 # action A press
@@ -193,15 +198,15 @@ while True:
     show()
 
     # poll for control actions and dispatch corresponding functions
-    hold_b = False
     if button_b.is_pressed():
         start_ms = utime.ticks_ms()
         while True:
-            if utime.ticks_diff(utime.ticks_ms(), start_ms) >= hold_ms:
-                # hold
-                hold_b = True  # set hold-B to prevent a simple press to be registered
-                toggle_screen()
+            if not button_b.is_pressed():
                 break
+        if utime.ticks_diff(utime.ticks_ms(), start_ms) >= hold_ms:
+            # hold
+            hold_b = True  # set hold-B to prevent a simple press to be registered
+            toggle_screen()
 
     if button_b.was_pressed():  # note: was_pressed is better for toggling and cycling
         if hold_b:
