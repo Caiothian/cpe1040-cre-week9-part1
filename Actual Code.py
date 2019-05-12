@@ -43,8 +43,8 @@ def bit_image():
     global bit_list
     global bit_on
 
-    num_bits = len(bit_list)  # how many bits are already defined
-    show_bits = []  # list for constructing the Image
+    num_bits = len(bit_list)                                # how many bits are already defined
+    show_bits = []                                          # list for constructing the Image
 
     # which page are we on?
     if num_bits <= 25:
@@ -163,11 +163,19 @@ def action_b_press():
 
     if screens[screen_id] == 'bits':
         bit_list.append(current_bit)
-        current_bit = 0
+        current_bit=0
         if len(bit_list) > 31:
             toggle_screen()
     elif screens[screen_id] == 'value':
         type_id = (type_id + 1) % len(types)
+
+
+
+
+
+
+
+
 
 
 # action A press
@@ -184,6 +192,9 @@ def action_a_press():
         if len(bit_list) < max_bits:
             current_bit = (current_bit + 1) % 2
     elif screens[screen_id] == 'value':
+        if pages[page_id] == 'type':
+            if type[type_id] == 'U':
+                bit_pattern_value_unsigned(
             scrolled = False
 
 
